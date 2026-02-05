@@ -1,12 +1,14 @@
 package de.f0rce.ace.util;
 
+import java.io.Serializable;
+
 import de.f0rce.ace.events.AceBlurChanged;
 import de.f0rce.ace.events.AceForceSyncDomEvent;
 import de.f0rce.ace.events.AceSelectionChanged;
-import elemental.json.JsonObject;
+import tools.jackson.databind.JsonNode;
 
 /** @author David "F0rce" Dodlek */
-public class AceCursorPosition {
+public class AceCursorPosition implements Serializable {
 
   private int row;
   private int column;
@@ -23,12 +25,12 @@ public class AceCursorPosition {
    * Constructor for initializing the values directly from the frontend (only used in {@link
    * AceBlurChanged}, {@link AceSelectionChanged}, {@link AceForceSyncDomEvent}).
    *
-   * @param cursorObject {@link JsonObject}
+   * @param cursorObject {@link JsonNode}
    */
-  public AceCursorPosition(JsonObject cursorObject) {
-    this.row = (int) cursorObject.getNumber("row");
-    this.column = (int) cursorObject.getNumber("column");
-    this.index = (int) cursorObject.getNumber("index");
+  public AceCursorPosition(JsonNode cursorObject) {
+    this.row = (int) cursorObject.get("row").asInt();
+    this.column = (int) cursorObject.get("column").asInt();
+    this.index = (int) cursorObject.get("index").asInt();
   }
 
   /**

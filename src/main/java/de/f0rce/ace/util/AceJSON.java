@@ -9,6 +9,10 @@ import de.f0rce.ace.AceEditor;
  */
 public class AceJSON {
 
+  private AceJSON() {
+    // Utility Class
+  }
+
   /**
    * {@link AceEditor#setSelection(int, int, int, int)}
    *

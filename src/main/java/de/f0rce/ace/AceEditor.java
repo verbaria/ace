@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
-import com.google.gson.Gson;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -41,6 +40,7 @@ import de.f0rce.ace.util.AceJSON;
 import de.f0rce.ace.util.AceMarker;
 import de.f0rce.ace.util.AceSelection;
 import de.f0rce.ace.util.AceStaticWordCompleter;
+import tools.jackson.databind.ObjectMapper;
 
 /** @author David "F0rce" Dodlek */
 @SuppressWarnings("serial")
@@ -75,12 +75,13 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
   private boolean useWorker = false;
   private boolean liveAutocompletion = false;
   private boolean enableSnippets = false;
-  private List<AceMarker> markers = new ArrayList<AceMarker>();
+  private List<AceMarker> markers = new ArrayList<>();
   private boolean statusbarEnabled = true;
   private AceStatusbarIndexing statusbarIndexing = AceStatusbarIndexing.ONE_BASED;
   private List<IAceWordCompleter> customWordCompleter = new ArrayList<>();
   private Map<String, AceCustomMode> customModes = new HashMap<>();
   private String customMode = "";
+  private ObjectMapper objectMapper = new ObjectMapper();
 
   // Some internal checking
   private boolean hasBeenDetached = false;
@@ -127,10 +128,10 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
       }
       if (!this.customWordCompleter.isEmpty()) {
         for (IAceWordCompleter completer : this.customWordCompleter) {
-          if (completer instanceof AceStaticWordCompleter) {
-            this.getElement().callJsFunction("addStaticWordCompleter", completer.toJSON());
-          } else if (completer instanceof AceDynamicWordCompleter) {
-            this.getElement().callJsFunction("addDynamicWordCompleter", completer.toJSON());
+          if (completer instanceof AceStaticWordCompleter aceStaticWordCompleter) {
+            this.getElement().callJsFunction("addStaticWordCompleter", aceStaticWordCompleter.toJSON());
+          } else if (completer instanceof AceDynamicWordCompleter aceDynamicWordCompleter) {
+            this.getElement().callJsFunction("addDynamicWordCompleter", aceDynamicWordCompleter.toJSON());
           }
         }
       }
@@ -141,7 +142,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
           String key = it.next();
           AceCustomMode value = this.customModes.get(key);
 
-          this.getElement().callJsFunction("addCustomMode", key, new Gson().toJson(value));
+          this.getElement().callJsFunction("addCustomMode", key, objectMapper.writeValueAsString(value));
         }
       }
       if (!this.customMode.isBlank() && !this.customMode.isEmpty() && this.mode == AceMode.custom) {
@@ -802,8 +803,10 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * Deprecated since v2.4.0 / v3.4.0! Please use {@link #addStaticWordCompleter(List)}.
    *
    * @param wordList {@link List}
+   * @deprecated Please use {@link #addStaticWordCompleter(List)}.
+   * @since v2.4.0 / v3.4.0
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void setCustomAutocompletion(List<String> wordList) {
     this.addStaticWordCompleter(wordList);
   }
@@ -813,8 +816,10 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    *
    * @param wordList {@link List}
    * @param keepCurrentCompleters boolean
+   * @deprecated Please use {@link #addStaticWordCompleter(List, boolean)}.
+   * @since v2.4.0 / v3.4.0
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void setCustomAutocompletion(List<String> wordList, boolean keepCurrentCompleters) {
     this.addStaticWordCompleter(wordList, keepCurrentCompleters);
   }
@@ -824,8 +829,10 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    *
    * @param wordList {@link List}
    * @param category {@link String}
+   * @deprecated Please use {@link #addStaticWordCompleter(List, String)}.
+   * @since v2.4.0 / v3.4.0
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void setCustomAutocompletion(List<String> wordList, String category) {
     this.addStaticWordCompleter(wordList, category);
   }
@@ -837,8 +844,11 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param wordList {@link List}
    * @param category {@link String}
    * @param keepCurrentCompleters boolean
+   * @deprecated Please use {@link #addStaticWordCompleter(List, String,
+   * boolean)}.
+   * @since v2.4.0 / v3.4.0
    */
-  @Deprecated
+  @Deprecated(forRemoval = false) 
   public void setCustomAutocompletion(
       List<String> wordList, String category, boolean keepCurrentCompleters) {
     this.addStaticWordCompleter(wordList, category, keepCurrentCompleters);
@@ -848,8 +858,10 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * Deprecated since v2.4.0 / v3.4.0! Please use {@link #getStaticWordCompleter()}.
    *
    * @return {@link List}
+   * @deprecated Please use {@link #getStaticWordCompleter()}.
+   * @since v2.4.0 / v3.4.0 
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public List<String> getCustomAutocompletion() {
 
     ArrayList<String> words = new ArrayList<>();
@@ -871,7 +883,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param words {@link List}
    */
   public void addStaticWordCompleter(List<String> words) {
-    if (words.size() == 0) {
+    if (words.isEmpty()) {
       return;
     }
 
@@ -888,7 +900,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param keepCompleters boolean
    */
   public void addStaticWordCompleter(List<String> words, boolean keepCompleters) {
-    if (words.size() == 0) {
+    if (words.isEmpty()) {
       return;
     }
 
@@ -910,7 +922,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param category {@link String}
    */
   public void addStaticWordCompleter(List<String> words, String category) {
-    if (words.size() == 0) {
+    if (words.isEmpty()) {
       return;
     }
 
@@ -928,7 +940,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param keepCompleters boolean
    */
   public void addStaticWordCompleter(List<String> words, String category, boolean keepCompleters) {
-    if (words.size() == 0) {
+    if (words.isEmpty()) {
       return;
     }
 
@@ -971,8 +983,8 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
     ArrayList<AceStaticWordCompleter> staticCompleter = new ArrayList<>();
 
     for (IAceWordCompleter completer : this.customWordCompleter) {
-      if (completer instanceof AceStaticWordCompleter) {
-        staticCompleter.add((AceStaticWordCompleter) completer);
+      if (completer instanceof AceStaticWordCompleter aceStaticWordCompleter) {
+        staticCompleter.add(aceStaticWordCompleter);
       }
     }
 
@@ -1287,7 +1299,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
   /** Removes every marker from the editor. */
   public void removeAllMarkers() {
     this.getElement().setProperty("rmMarker", "all" + UUID.randomUUID().toString());
-    this.markers = new ArrayList<AceMarker>();
+    this.markers = new ArrayList<>();
   }
 
   /**
@@ -1487,8 +1499,10 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    *
    * @param map {@link Map}
    * @param seperator {@link String}
+   * @deprecated Please use {@link #addDynamicWordCompleter(Map, String)}.
+   * @since v2.4.0 / v3.4.0
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void addDynamicAutocompletion(Map<String, List<String>> map, String seperator) {
     this.addDynamicWordCompleter(map, seperator);
   }
@@ -1500,8 +1514,11 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param map {@link Map}
    * @param seperator {@link String}
    * @param category {@link String}
+   * @deprecated Please use {@link #addDynamicWordCompleter(Map, String,
+   * String)}.
+   * @since v2.4.0 / v3.4.0
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void addDynamicAutocompletion(
       Map<String, List<String>> map, String seperator, String category) {
     this.addDynamicWordCompleter(map, seperator, category);
@@ -1514,8 +1531,12 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param map {@link Map}
    * @param seperator {@link String}
    * @param keepCompleters boolean
+   * 
+   * @deprecated Please use {@link #addDynamicWordCompleter(Map, String,
+   * boolean)}.
+   * @since v2.4.0 / v3.4.0
    */
-  @Deprecated
+  @Deprecated(forRemoval = false)
   public void addDynamicAutocompletion(
       Map<String, List<String>> map, String seperator, boolean keepCompleters) {
     this.addDynamicAutocompletion(map, seperator, keepCompleters);
@@ -1549,7 +1570,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
 
     AceDynamicWordCompleter adwc = new AceDynamicWordCompleter(dynamicWords, seperator);
 
-    this.getElement().callJsFunction("addDynamicWordCompleter", adwc.toJSON());
+    this.getElement().callJsFunction("addDynamicWordCompleter", adwc.toJSON()); 
     this.customWordCompleter = new ArrayList<>(Arrays.asList(adwc));
   }
 
@@ -1636,7 +1657,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
       return;
     }
 
-    this.getElement().callJsFunction("addStaticWordCompleter", dynamicWordCompleter.toJSON());
+    this.getElement().callJsFunction("addDynamicWordCompleter", dynamicWordCompleter.toJSON());
 
     if (dynamicWordCompleter.isKeepCompleters()) {
       this.customWordCompleter.add(dynamicWordCompleter);
@@ -1654,8 +1675,8 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
     ArrayList<AceDynamicWordCompleter> dynamicCompleter = new ArrayList<>();
 
     for (IAceWordCompleter completer : this.customWordCompleter) {
-      if (completer instanceof AceDynamicWordCompleter) {
-        dynamicCompleter.add((AceDynamicWordCompleter) completer);
+      if (completer instanceof AceDynamicWordCompleter aceDynamicWordCompleter) {
+        dynamicCompleter.add(aceDynamicWordCompleter);
       }
     }
 
@@ -1768,7 +1789,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param customMode {@link AceCustomMode}
    */
   public void addCustomMode(String name, AceCustomMode customMode) {
-    this.getElement().callJsFunction("addCustomMode", name, new Gson().toJson(customMode));
+    this.getElement().callJsFunction("addCustomMode", name, objectMapper.writeValueAsString(customMode));
     this.customModes.put(name, customMode);
   }
 

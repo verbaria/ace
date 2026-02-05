@@ -1,12 +1,14 @@
 package de.f0rce.ace.util;
 
+import java.io.Serializable;
+
 import de.f0rce.ace.events.AceBlurChanged;
 import de.f0rce.ace.events.AceForceSyncDomEvent;
 import de.f0rce.ace.events.AceSelectionChanged;
-import elemental.json.JsonObject;
+import tools.jackson.databind.JsonNode;
 
 /** @author David "F0rce" Dodlek */
-public class AceSelection {
+public class AceSelection implements Serializable {
 
   private int startRow;
   private int startColumn;
@@ -31,22 +33,22 @@ public class AceSelection {
    * Constructor for initializing the values directly from the frontend (only used in {@link
    * AceBlurChanged}, {@link AceSelectionChanged}, {@link AceForceSyncDomEvent}).
    *
-   * @param selectionObject {@link JsonObject}
+   * @param selectionObject {@link JsonNode}
    */
-  public AceSelection(JsonObject selectionObject) {
-    JsonObject startObject = selectionObject.getObject("start");
-    this.startRow = (int) startObject.getNumber("row");
-    this.startColumn = (int) startObject.getNumber("column");
+  public AceSelection(JsonNode selectionObject) {
+    JsonNode startObject = selectionObject.get("start");
+    this.startRow = (int) startObject.get("row").asInt();
+    this.startColumn = (int) startObject.get("column").asInt();
 
-    JsonObject endObject = selectionObject.getObject("end");
-    this.endRow = (int) endObject.getNumber("row");
-    this.endColumn = (int) endObject.getNumber("column");
+    JsonNode endObject = selectionObject.get("end");
+    this.endRow = (int) endObject.get("row").asInt();
+    this.endColumn = (int) endObject.get("column").asInt();
 
-    JsonObject indexObject = selectionObject.getObject("index");
-    this.startIndex = (int) indexObject.getNumber("start");
-    this.endIndex = (int) indexObject.getNumber("end");
+    JsonNode indexObject = selectionObject.get("index");
+    this.startIndex = (int) indexObject.get("start").asInt();
+    this.endIndex = (int) indexObject.get("end").asInt();
 
-    this.selectedText = selectionObject.getString("selectedText");
+    this.selectedText = selectionObject.get("selectedText").asString();
   }
 
   /**
