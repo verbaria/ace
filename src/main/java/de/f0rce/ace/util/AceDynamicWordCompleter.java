@@ -2,9 +2,10 @@ package de.f0rce.ace.util;
 
 import java.util.List;
 import java.util.Map;
-import com.google.gson.Gson;
 import de.f0rce.ace.AceEditor;
 import de.f0rce.ace.interfaces.IAceWordCompleter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 
 /** @author David "F0rce" Dodlek */
 public class AceDynamicWordCompleter implements IAceWordCompleter {
@@ -16,7 +17,7 @@ public class AceDynamicWordCompleter implements IAceWordCompleter {
 
   /**
    * @param dynamicWords {@link Map}
-   * @param seperator {@link String}
+   * @param seperator    {@link String}
    */
   public AceDynamicWordCompleter(Map<String, List<String>> dynamicWords, String seperator) {
     this(dynamicWords, seperator, AceEditor.DEFAULT_DYNAMIC_CATEGORY, false);
@@ -24,8 +25,8 @@ public class AceDynamicWordCompleter implements IAceWordCompleter {
 
   /**
    * @param dynamicWords {@link Map}
-   * @param seperator {@link String}
-   * @param category {@link String}
+   * @param seperator    {@link String}
+   * @param category     {@link String}
    */
   public AceDynamicWordCompleter(
       Map<String, List<String>> dynamicWords, String seperator, String category) {
@@ -33,8 +34,8 @@ public class AceDynamicWordCompleter implements IAceWordCompleter {
   }
 
   /**
-   * @param dynamicWords {@link Map}
-   * @param seperator {@link String}
+   * @param dynamicWords   {@link Map}
+   * @param seperator      {@link String}
    * @param keepCompleters boolean
    */
   public AceDynamicWordCompleter(
@@ -43,9 +44,9 @@ public class AceDynamicWordCompleter implements IAceWordCompleter {
   }
 
   /**
-   * @param dynamicWords {@link Map}
-   * @param seperator {@link String}
-   * @param category {@link String}
+   * @param dynamicWords   {@link Map}
+   * @param seperator      {@link String}
+   * @param category       {@link String}
    * @param keepCompleters boolean
    */
   public AceDynamicWordCompleter(
@@ -81,6 +82,8 @@ public class AceDynamicWordCompleter implements IAceWordCompleter {
 
   @Override
   public String toJSON() {
-    return new Gson().toJson(this);
+    var objectMapper = new ObjectMapper();
+    return objectMapper.writeValueAsString(this);
   }
+
 }

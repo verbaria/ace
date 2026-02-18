@@ -1,5 +1,6 @@
 package de.f0rce.ace.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ import de.f0rce.ace.enums.AceCustomModeTokens;
  * @see <a href="https://github.com/F0rce/ace/issues">GitHub Repository</a>
  * @author David "F0rce" Dodlek
  */
-public class AceCustomModeRule {
+public class AceCustomModeRule implements Serializable {
 
   private Object token;
   private String regex;

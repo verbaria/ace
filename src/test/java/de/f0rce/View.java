@@ -12,8 +12,6 @@ import com.vaadin.flow.component.html.NativeLabel;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.theme.Theme;
-import com.vaadin.flow.theme.lumo.Lumo;
 import de.f0rce.ace.AceEditor;
 import de.f0rce.ace.enums.AceExportType;
 import de.f0rce.ace.enums.AceMode;

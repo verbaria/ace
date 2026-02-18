@@ -1,12 +1,13 @@
 package de.f0rce.ace.util;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AceCustomMode {
+public class AceCustomMode implements Serializable {
 
   private Map<String, List<AceCustomModeRule>> states = new HashMap<>();
 

@@ -1,9 +1,9 @@
 package de.f0rce.ace.util;
 
 import java.util.List;
-import com.google.gson.Gson;
 import de.f0rce.ace.AceEditor;
 import de.f0rce.ace.interfaces.IAceWordCompleter;
+import tools.jackson.databind.ObjectMapper;
 
 /** @author David "F0rce" Dodlek */
 public class AceStaticWordCompleter implements IAceWordCompleter {
@@ -18,7 +18,7 @@ public class AceStaticWordCompleter implements IAceWordCompleter {
   }
 
   /**
-   * @param words {@link List}
+   * @param words          {@link List}
    * @param keepCompleters boolean
    */
   public AceStaticWordCompleter(List<String> words, boolean keepCompleters) {
@@ -26,7 +26,7 @@ public class AceStaticWordCompleter implements IAceWordCompleter {
   }
 
   /**
-   * @param words {@link List}
+   * @param words    {@link List}
    * @param category {@link String}
    */
   public AceStaticWordCompleter(List<String> words, String category) {
@@ -34,8 +34,8 @@ public class AceStaticWordCompleter implements IAceWordCompleter {
   }
 
   /**
-   * @param words {@link List}
-   * @param category {@link String}
+   * @param words          {@link List}
+   * @param category       {@link String}
    * @param keepCompleters boolean
    */
   public AceStaticWordCompleter(List<String> words, String category, boolean keepCompleters) {
@@ -61,6 +61,7 @@ public class AceStaticWordCompleter implements IAceWordCompleter {
 
   @Override
   public String toJSON() {
-    return new Gson().toJson(this);
+    var objectMapper = new ObjectMapper();
+    return objectMapper.writeValueAsString(this);
   }
 }
