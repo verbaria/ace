@@ -1052,21 +1052,9 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
               currentSelection.getEndColumn(),
               color);
 
-      this.getElement()
-          .setProperty(
-              "marker",
-              marker.getRowStart()
-                  + "|"
-                  + marker.getFrom()
-                  + "|"
-                  + marker.getRowEnd()
-                  + "|"
-                  + marker.getTo()
-                  + "|"
-                  + marker.getAceMarkerColor().toString()
-                  + "|"
-                  + marker.getID());
       this.markers.add(marker);
+      this.getElement().callJsFunction("addMarker", marker.toJSON());
+
       return marker;
     }
     return null;
@@ -1096,21 +1084,8 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
               color,
               alias);
 
-      this.getElement()
-          .setProperty(
-              "marker",
-              marker.getRowStart()
-                  + "|"
-                  + marker.getFrom()
-                  + "|"
-                  + marker.getRowEnd()
-                  + "|"
-                  + marker.getTo()
-                  + "|"
-                  + marker.getAceMarkerColor().toString()
-                  + "|"
-                  + marker.getID());
       this.markers.add(marker);
+      this.getElement().callJsFunction("addMarker", marker.toJSON());
       return marker;
     }
     return null;
@@ -1146,22 +1121,8 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
     }
 
     AceMarker marker = new AceMarker(rowStart, from, rowEnd, to, color);
-
-    this.getElement()
-        .setProperty(
-            "marker",
-            marker.getRowStart()
-                + "|"
-                + marker.getFrom()
-                + "|"
-                + marker.getRowEnd()
-                + "|"
-                + marker.getTo()
-                + "|"
-                + marker.getAceMarkerColor().toString()
-                + "|"
-                + marker.getID());
     this.markers.add(marker);
+    this.getElement().callJsFunction("addMarker", marker.toJSON());
     return marker;
   }
 
@@ -1196,22 +1157,8 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
     }
 
     AceMarker marker = new AceMarker(rowStart, from, rowEnd, to, color, alias);
-
-    this.getElement()
-        .setProperty(
-            "marker",
-            marker.getRowStart()
-                + "|"
-                + marker.getFrom()
-                + "|"
-                + marker.getRowEnd()
-                + "|"
-                + marker.getTo()
-                + "|"
-                + marker.getAceMarkerColor().toString()
-                + "|"
-                + marker.getID());
     this.markers.add(marker);
+    this.getElement().callJsFunction("addMarker", marker.toJSON());
     return marker;
   }
 
@@ -1221,21 +1168,8 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param marker {@link AceMarker}
    */
   public void addMarker(AceMarker marker) {
-    this.getElement()
-        .setProperty(
-            "marker",
-            marker.getRowStart()
-                + "|"
-                + marker.getFrom()
-                + "|"
-                + marker.getRowEnd()
-                + "|"
-                + marker.getTo()
-                + "|"
-                + marker.getAceMarkerColor().toString()
-                + "|"
-                + marker.getID());
     this.markers.add(marker);
+    this.getElement().callJsFunction("addMarker", marker.toJSON());
   }
 
   /**
@@ -1256,9 +1190,9 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param marker {@link AceMarker}
    */
   public void removeMarker(AceMarker marker) {
-    for (AceMarker mar : this.markers) {
+    for (AceMarker mar : new ArrayList<>(this.markers)) {
       if (mar.getID().equals(marker.getID())) {
-        this.getElement().setProperty("rmMarker", marker.getID());
+        this.getElement().callJsFunction("rmMarker", marker.getID());
         this.markers.remove(marker);
       }
     }
@@ -1272,9 +1206,9 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param id {@link String}
    */
   public void removeMarkerByID(String id) {
-    for (AceMarker mar : this.markers) {
+    for (AceMarker mar : new ArrayList<>(this.markers)) {
       if (mar.getID().equals(id)) {
-        this.getElement().setProperty("rmMarker", id);
+        this.getElement().callJsFunction("rmMarker", id);
         this.markers.remove(mar);
       }
     }
@@ -1288,9 +1222,9 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
    * @param alias {@link String}
    */
   public void removeMarkerByAlias(String alias) {
-    for (AceMarker mar : this.markers) {
+    for (AceMarker mar : new ArrayList<>(this.markers)) {
       if (mar.getAlias().equals(alias)) {
-        this.getElement().setProperty("rmMarker", mar.getID());
+        this.getElement().callJsFunction("rmMarker", mar.getID());
         this.markers.remove(mar);
       }
     }
@@ -1298,7 +1232,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
 
   /** Removes every marker from the editor. */
   public void removeAllMarkers() {
-    this.getElement().setProperty("rmMarker", "all" + UUID.randomUUID().toString());
+    this.getElement().callJsFunction("rmMarker", "all" + UUID.randomUUID());
     this.markers = new ArrayList<>();
   }
 
