@@ -171,4 +171,27 @@ public class AceMarker implements Serializable {
         + this.alias
         + "]";
   }
+
+  public String toJSON() {
+    StringBuilder builder = new StringBuilder();
+
+    builder.append("{");
+    builder.append("\"id\": \"" + this.getID() + "\", ");
+    builder.append("\"color\": \"" + this.getAceMarkerColor().toString() + "\", ");
+    builder.append(
+            "\"start\": { \"row\": "
+                    + this.getRowStart()
+                    + ", \"from\": "
+                    + this.getFrom()
+                    + " }, ");
+    builder.append(
+            "\"end\": { \"row\": "
+                    + this.getRowEnd()
+                    + ", \"to\": "
+                    + this.getTo()
+                    + " }");
+    builder.append("}");
+
+    return builder.toString();
+  }
 }

@@ -38,9 +38,6 @@ class LitAce extends LitElement {
       displayIndentGuides: { type: Boolean },
       highlightSelectedWord: { type: Boolean },
       useWorker: { type: Boolean },
-      marker: { type: String }, // TODO: remove this, use markerList instead
-      markerList: { type: Array }, // TODO: kepp this, backend should create a json with all markers
-      rmMarker: { type: String }, // TODO: use method
       statusbarEnabled: { type: Boolean },
       enableSnippets: { type: Boolean },
     };
@@ -67,9 +64,6 @@ class LitAce extends LitElement {
     this.displayIndentGuides = false;
     this.highlightSelectedWord = false;
     this.useWorker = false;
-    this.marker = "-|-|-|-|-|-";
-    this.markerList = { markers: [] };
-    this.rmMarker = "";
     this.statusbarEnabled = true;
     this.enableSnippets = false;
   }
@@ -197,6 +191,8 @@ class LitAce extends LitElement {
     this.snippetManager = ace.require("ace/snippets").snippetManager;
 
     this._customModes = new Map();
+
+    this._activeMarkers = new Map();
 
     let self = this;
 
@@ -472,52 +468,54 @@ class LitAce extends LitElement {
     this.editor.renderer.setShowGutter(this.showGutter);
   }
 
-  markerChanged() {
+  addMarker(json) {
     if (this.editor == undefined) {
-      return;
+      this.addEventListener("editor-ready", () => this._addMarker(json), {
+        once: true,
+      });
+    } else {
+      this._addMarker(json);
     }
-
-    if (this.marker == "-|-|-|-|-|-") {
-      return;
-    }
-
-    const markerRaw = this.marker;
-    const rawSplit = markerRaw.split("|");
-    const markerRowStart = parseInt(rawSplit[0]);
-    const markerFrom = parseInt(rawSplit[1]);
-    const markerRowEnd = parseInt(rawSplit[2]);
-    const markerTo = parseInt(rawSplit[3]);
-    const markerColor = String(rawSplit[4]);
-    const uuid = String(rawSplit[5]);
-
-    const Range = ace.require("ace/range").Range;
-    const _range = this.editor.session.addMarker(
-      new Range(markerRowStart, markerFrom, markerRowEnd, markerTo),
-      markerColor,
-      "text",
-      false
-    );
-    this.markerList.markers.push({ uuid: uuid, rangeid: _range });
   }
 
-  rmMarkerChanged() {
-    if (this.rmMarker == "") {
-      return;
-    }
+  /** @private */
+  _addMarker(json) {
+    const marker = JSON.parse(json);
 
-    if (this.rmMarker.includes("all")) {
-      for (var i in this.markerList.markers) {
-        const del = this.markerList.markers[i].rangeid;
-        this.editor.getSession().removeMarker(del);
-        delete this.markerList.markers[i];
-      }
+    if(!this._activeMarkers.has(marker.id)) {
+      const markerRowStart = marker.start.row;
+      const markerFrom = marker.start.from;
+      const markerRowEnd = marker.end.row;
+      const markerTo = marker.end.to;
+      const markerColor = marker.color;
+
+      const Range = ace.require("ace/range").Range;
+      const _range = this.editor.session.addMarker(
+          new Range(markerRowStart, markerFrom, markerRowEnd, markerTo),
+          markerColor,
+          "text",
+          false
+      );
+      this._activeMarkers.set(marker.id, _range);
+    }
+  }
+
+  rmMarker(id) {
+    if (this.editor == undefined) {
+      this.addEventListener("editor-ready", () => this._rmMarker(id), {
+        once: true,
+      });
     } else {
-      for (var i in this.markerList.markers) {
-        if (this.markerList.markers[i].uuid == this.rmMarker) {
-          const del = this.markerList.markers[i].rangeid;
-          this.editor.getSession().removeMarker(del);
-          delete this.markerList.markers[i];
-        }
+      this._rmMarker(id);
+    }
+  }
+
+  /** @private */
+  _rmMarker(id) {
+    for (const [key, value] of this._activeMarkers) {
+      if (id.includes("all") || key == id) {
+        this.editor.getSession().removeMarker(value);
+        this._activeMarkers.delete(key);
       }
     }
   }
