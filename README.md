@@ -1,39 +1,91 @@
-![Screenshot 2022-03-25 141019](https://user-images.githubusercontent.com/60381251/160126738-0b266dd1-6c70-4bdb-a8f7-6a2637bfd528.png)</br>
-[![Published on Vaadin  Directory](https://img.shields.io/badge/Vaadin%20Directory-published-00b4f0.svg)](https://vaadin.com/directory/component/ace)
-[![Stars on vaadin.com/directory](https://img.shields.io/vaadin-directory/star/ace.svg)](https://vaadin.com/directory/component/ace)
-[![Vaadin Directory](https://img.shields.io/vaadin-directory/v/ace)](https://vaadin.com/directory/component/ace)
-[![Vaadin Directory](https://img.shields.io/vaadin-directory/release-date/ace)](https://vaadin.com/directory/component/ace)
-![Website](https://img.shields.io/website?down_message=offline&label=documentation&up_message=online&url=https%3A%2F%2Fdocs.f0rce.de%2Face)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FF0rce%2Face.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FF0rce%2Face?ref=badge_shield)
+# Ace Editor for Vaadin 25
 
-# Ace Editor for Vaadin 14 & 23
+Verbaria's fork of [F0rce/ace](https://github.com/F0rce/ace) — an embeddable
+[Ace](http://ace.c9.io/) editor add-on for Vaadin 25.
 
-Even <strong>more</strong> embeddable and lightweight 
-Vaadin Add-On - [Ace](http://ace.c9.io/) - The High Performance Code Editor
+Differences from upstream:
 
-> Frontend is based on [lit-ace](https://npmjs.com/package/@f0rce/lit-ace) created by myself 
-
-
-## Version Guide
-
-*(1.x: will have one last update to allow backwards compability with `AbstractSinglePropertyField` and to have all improvements done to v2.0)*</br> 
-[2.x](https://github.com/F0rce/ace/tree/master): Built for Vaadin 14 (with Java 8) extends `Component` (LTS)</br>
-[3.x](https://github.com/F0rce/ace/tree/3.x): Built for Vaadin 23 (with Java 11) extends `Component`
-
-
+- Styles extracted to `themes/` — pick `ace-aura.css` or `ace-lumo.css`.
+- New Ace theme `vaadin` whose colors come from CSS variables (`--ace-*`),
+  bridged to Vaadin tokens by the theme files above.
+  
 ## Install
 
-Install the component using [Vaadin Directory](https://vaadin.com/directory/component/ace)
+Add JitPack as a repository:
 
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
 
-## Documentation
+Add the dependency:
 
-[docs.f0rce.de/ace](https://docs.f0rce.de/ace)
+```xml
+<dependency>
+    <groupId>com.github.verbaria</groupId>
+    <artifactId>ace</artifactId>
+    <version>25.0.0</version>
+</dependency>
+```
 
+Version values JitPack accepts:
+
+- a release tag — e.g. `25.0.0` (recommended).
+- `master-SNAPSHOT` — latest commit on master, rebuilt on push.
+- a commit SHA — pinned build.
+
+## Theme
+
+The component ships **base styles only**. You must import one palette
+stylesheet, otherwise marker / status colors fall back to hardcoded
+neutrals.
+
+In your `AppShell`:
+
+```java
+@CssImport("./@f0rce/lit-ace/themes/ace-aura.css")   // for Aura
+// or
+@CssImport("./@f0rce/lit-ace/themes/ace-lumo.css")   // for Lumo
+```
+
+Aura tokens used: `--aura-{red,green,blue,orange,purple,yellow}` and the
+matching `-text` variants, plus the standard `--vaadin-*` tokens for
+neutrals (background, gutter, borders). Lumo tokens used: `--lumo-*`
+contrast / primary / success / error.
+
+## Tuning
+
+CSS knobs from `ace-base.css` (override per-instance or per-app):
+
+| variable                | purpose                          |
+|-------------------------|----------------------------------|
+| `--lae-border`          | editor outer border              |
+| `--lae-border-radius`   | editor border radius             |
+| `--las-background-color`| status indicator background      |
+| `--las-color`           | status indicator text            |
+| `--las-border-radius`   | status indicator radius          |
+| `--ace-content-padding` | inner text padding (px)          |
+
+All `--ace-*` syntax tokens are listed in the theme files — override any
+of them in your app CSS to recolor a single token.
+
+## Release
+
+Releases happen only through the GitHub Actions workflow. To cut one:
+
+1. Bump `<version>` in `pom.xml`.
+2. Commit with a message ending in `[release]`.
+3. Push to `master`.
+
+The workflow reads the version, creates the matching git tag, and
+publishes a GitHub Release with the built JAR. JitPack picks up the new
+tag on the next consumer request.
 
 ## License
 
-[MIT License](https://github.com/F0rce/ace/blob/master/LICENSE)
-
-
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FF0rce%2Face.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FF0rce%2Face?ref=badge_large)
+[MIT](https://github.com/verbaria/ace/blob/master/LICENSE) — inherited
+from upstream F0rce/ace.
