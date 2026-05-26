@@ -328,3 +328,5 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 frontend/generated/
+
+.consulo/
