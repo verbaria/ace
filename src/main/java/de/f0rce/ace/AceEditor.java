@@ -52,7 +52,7 @@ public class AceEditor extends Component implements HasSize, HasStyle, Focusable
   public static final String DEFAULT_STATIC_CATEGORY = "keyword";
   public static final String DEFAULT_DYNAMIC_CATEGORY = "dynamic";
 
-  private AceTheme theme = AceTheme.eclipse;
+  private AceTheme theme = AceTheme.vaadin;
   private AceMode mode = AceMode.javascript;
   private String value = "";
   private String baseUrl = "ace-builds/src-min-noconflict/";

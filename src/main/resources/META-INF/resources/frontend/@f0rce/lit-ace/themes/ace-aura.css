@@ -1,0 +1,85 @@
+:root {
+    --lae-border: 1px solid var(--vaadin-border-color);
+    --lae-border-radius: var(--vaadin-radius-m, 6px);
+
+    --las-background-color: var(--vaadin-text-color-secondary);
+    --las-color: var(--vaadin-background-color);
+    --las-border-radius: var(--vaadin-radius-s, 4px);
+
+    --ace-content-padding: 8px;
+
+    --ace-bg: var(--vaadin-background-color);
+    --ace-fg: var(--vaadin-text-color);
+    --ace-cursor: var(--vaadin-text-color);
+
+    --ace-gutter-bg: var(--vaadin-background-container);
+    --ace-gutter-fg: var(--vaadin-text-color-secondary);
+    --ace-gutter-border: var(--vaadin-border-color);
+    --ace-gutter-active-line-bg: var(--vaadin-background-container-strong);
+
+    --ace-print-margin-bg: var(--vaadin-background-container);
+    --ace-invisible: var(--vaadin-text-color-disabled);
+    --ace-bracket-border: var(--vaadin-border-color);
+    --ace-selected-word-border: var(--vaadin-border-color);
+    --ace-fold-bg: var(--vaadin-background-container-strong);
+
+    --ace-selection-bg: color-mix(in oklab, var(--aura-accent-color) 25%, transparent);
+    --ace-active-line-bg: color-mix(in oklab, var(--aura-accent-color) 8%, transparent);
+    --ace-step-bg: color-mix(in oklab, var(--aura-yellow) 50%, transparent);
+
+    --ace-keyword: var(--aura-blue-text);
+    --ace-storage: var(--aura-blue-text);
+    --ace-variable: var(--aura-purple-text);
+    --ace-type: var(--aura-purple-text);
+    --ace-function: var(--aura-blue-text);
+    --ace-string: var(--aura-green-text);
+    --ace-comment: var(--vaadin-text-color-secondary);
+    --ace-comment-doc: var(--vaadin-text-color-secondary);
+    --ace-comment-doc-tag: var(--vaadin-text-color-secondary);
+    --ace-constant-builtin: var(--aura-blue-text);
+    --ace-constant-library: var(--aura-green-text);
+    --ace-constant-numeric: var(--aura-orange-text);
+    --ace-tag: var(--aura-blue-text);
+    --ace-meta-tag: var(--aura-blue-text);
+    --ace-attribute-name: var(--aura-purple-text);
+    --ace-xml-pe: var(--vaadin-text-color-secondary);
+    --ace-fold-bg: var(--aura-blue);
+}
+
+.ace_marker-layer .red {
+    background-color: var(--aura-red);
+    color: var(--aura-red-text);
+    position: absolute;
+}
+
+.ace_marker-layer .green {
+    background-color: var(--aura-green);
+    color: var(--aura-green-text);
+    position: absolute;
+}
+
+.ace_marker-layer .blue {
+    background-color: var(--aura-blue);
+    color: var(--aura-blue-text);
+    position: absolute;
+}
+
+.ace_marker-layer .orange {
+    background-color: var(--aura-orange);
+    color: var(--aura-orange-text);
+    position: absolute;
+}
+
+.ace_marker-layer .darkGrey {
+    background-color: var(--vaadin-text-color);
+    color: var(--vaadin-background-color);
+    position: absolute;
+}
+
+lit-ace .ace_placeholder {
+    color: var(--vaadin-text-color-secondary, #808080) !important;
+    font-family: var(--vaadin-font-family) !important;
+    transform: scale(1) !important;
+    opacity: 1 !important;
+    font-style: italic !important;
+}

@@ -46,6 +46,7 @@ public enum AceTheme {
   tomorrow_night_bright,
   tomorrow_night_eighties,
   twilight,
+  vaadin,
   vibrant_ink,
   xcode
 }

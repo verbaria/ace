@@ -6,9 +6,12 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { LitElement, html, css } from "lit";
+import { LitElement, html } from "lit";
+
+import "./themes/ace-base.css";
 
 import "@f0rce/ace-builds/src-noconflict/ace.js";
+import "./themes/theme-vaadin.js";
 import "@f0rce/ace-builds/src-noconflict/ext-language_tools.js";
 import "@f0rce/ace-builds/src-noconflict/ext-static_highlight.js";
 import "@f0rce/ace-builds/src-noconflict/ext-beautify.js";
@@ -45,7 +48,7 @@ class LitAce extends LitElement {
 
   constructor() {
     super();
-    this.theme = "eclipse";
+    this.theme = "vaadin";
     this.mode = "javascript";
     this.baseUrl = "ace-builds/src-min-noconflict/";
     this.readonly = false;
@@ -68,72 +71,8 @@ class LitAce extends LitElement {
     this.enableSnippets = false;
   }
 
-  static get styles() {
-    return css`
-      :host {
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-      #editor {
-        border: var(--lae-border, 1px solid var(--lumo-contrast-20pct));
-        border-radius: var(--lae-border-radius, var(--lumo-border-radius));
-        @apply --ace-widget-editor;
-      }
-      #editorStatusbar {
-        z-index: 9 !important;
-        position: absolute !important;
-        right: 4px;
-        bottom: 4px;
-      }
-      .ace_status-indicator {
-        background-color: var(--las-background-color, #777);
-        color: var(--las-color, white);
-        text-align: center;
-        border: none;
-        border-radius: var(--las-border-radius, 7px);
-        padding-right: 3px;
-        padding-left: 3px;
-        padding-bottom: 1px;
-        font-size: small;
-        opacity: 0.9;
-      }
-      .hide_statusbar {
-        display: none;
-      }
-      .ace_marker-layer .green {
-        background-color: var(--lumo-success-color);
-        color: var(--lumo-primary-contrast-color);
-        position: absolute;
-      }
-      .ace_marker-layer .darkGrey {
-        background-color: var(--lumo-shade-50pct);
-        color: var(--lumo-primary-contrast-color);
-        position: absolute;
-      }
-      .ace_marker-layer .red {
-        background-color: var(--lumo-error-color);
-        color: var(--lumo-primary-contrast-color);
-        position: absolute;
-      }
-      .ace_marker-layer .blue {
-        background-color: var(--lumo-primary-color);
-        color: var(--lumo-primary-contrast-color);
-        position: absolute;
-      }
-      .ace_marker-layer .orange {
-        background-color: #ff9900;
-        color: #555;
-        position: absolute;
-      }
-      .ace_placeholder {
-        color: #808080 !important;
-        font-family: var(--lumo-font-family) !important;
-        transform: scale(1) !important;
-        opacity: 1 !important;
-        font-style: italic !important;
-      }
-    `;
+  createRenderRoot() {
+    return this;
   }
 
   render() {
@@ -178,12 +117,11 @@ class LitAce extends LitElement {
 
     this.initialInit = true;
 
-    this.editorDiv = this.shadowRoot.getElementById("editor");
-    this.editorContainerDiv = this.shadowRoot.getElementById("editorContainer");
-    this.editorStatusbarDiv = this.shadowRoot.getElementById("editorStatusbar");
+    this.editorDiv = this.renderRoot.querySelector("#editor");
+    this.editorContainerDiv = this.renderRoot.querySelector("#editorContainer");
+    this.editorStatusbarDiv = this.renderRoot.querySelector("#editorStatusbar");
 
     this.editor = ace.edit(this.editorDiv);
-    this.editor.renderer.attachToShadowRoot();
     this.editor.langTools = ace.require("ace/ext/language_tools");
     this.editor.staticHighlight = ace.require("ace/ext/static_highlight");
     this.editor.beautify = ace.require("ace/ext/beautify");
@@ -294,7 +232,7 @@ class LitAce extends LitElement {
       { root: null }
     );
     this.vScrollbarObserver.observe(
-      this.shadowRoot.querySelector(".ace_scrollbar-v")
+      this.renderRoot.querySelector(".ace_scrollbar-v")
     );
 
     this.hScrollbarObserver = new IntersectionObserver(
@@ -302,7 +240,7 @@ class LitAce extends LitElement {
       { root: null }
     );
     this.hScrollbarObserver.observe(
-      this.shadowRoot.querySelector(".ace_scrollbar-h")
+      this.renderRoot.querySelector(".ace_scrollbar-h")
     );
   }
 
@@ -321,6 +259,17 @@ class LitAce extends LitElement {
       return;
     }
     this.editor.setTheme("ace/theme/" + this.theme);
+
+    requestAnimationFrame(() => {
+      const pad = parseInt(
+        getComputedStyle(this).getPropertyValue("--ace-content-padding"),
+        10
+      );
+      if (!isNaN(pad)) {
+        this.editor.renderer.setPadding(pad);
+        this.editor.resize(true);
+      }
+    });
   }
 
   modeChanged() {
@@ -1326,7 +1275,7 @@ class LitAce extends LitElement {
 
   /** @private */
   _vScrollbarHandler() {
-    var vScrollbar = this.shadowRoot.querySelector(".ace_scrollbar-v");
+    var vScrollbar = this.renderRoot.querySelector(".ace_scrollbar-v");
     if (vScrollbar.style.display === "none") {
       this.editorStatusbarDiv.style.right = "4px";
     } else {
@@ -1340,7 +1289,7 @@ class LitAce extends LitElement {
 
   /** @private */
   _hScrollbarHandler() {
-    var hScrollbar = this.shadowRoot.querySelector(".ace_scrollbar-h");
+    var hScrollbar = this.renderRoot.querySelector(".ace_scrollbar-h");
     if (hScrollbar.style.display === "none") {
       this.editorStatusbarDiv.style.bottom = "4px";
     } else {
